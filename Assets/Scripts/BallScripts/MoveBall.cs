@@ -32,7 +32,7 @@ public class MoveBall : MonoBehaviour
             }
             Animation += Time.deltaTime;
             if(Animation<=1.5f && !HoopCollision){
-                currentPosition = GameObject.Find("ARCamera").transform.position;
+                currentPosition = GameObject.Find("Main Camera").transform.position;
                 hoop = GameObject.Find("hoop");
                 rigid.isKinematic=true;
                 CreateParabolaAnimation();

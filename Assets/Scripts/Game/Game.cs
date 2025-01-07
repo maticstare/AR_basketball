@@ -19,6 +19,7 @@ public class Game : MonoBehaviour
     }
 
     public static void initialize() {
+        Debug.Log("Initializing Game");
         // Loads saved data
         data = SaveHandler.sh_LoadGameData();
 

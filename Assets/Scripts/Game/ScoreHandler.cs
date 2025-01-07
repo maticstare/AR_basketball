@@ -14,14 +14,16 @@ public class ScoreHandler {
     public ScoreHandler(int ca_maxScore) {
         this.score = 0;
         this.maxScore = ca_maxScore;
-        GameObject cst = GameObject.Find("ScoreText");
+        /* GameObject cst = GameObject.Find("ScoreText");
         GameObject mst = GameObject.Find("ScoreText");
         if(cst != null) {
-            this.currentScoreText = GameObject.Find("ScoreText").GetComponent<TextMeshProUGUI>();
+            this.currentScoreText = GameObject.Find("CurrentscoreNumber").GetComponent<TextMeshProUGUI>();
         }
         if(mst != null) {
-            this.maxScoreText = GameObject.Find("MaxScoreText").GetComponent<TextMeshPro>();
-        }
+            this.maxScoreText = GameObject.Find("HighscoreNumber").GetComponent<TextMeshPro>();
+        } */
+        this.currentScoreText = GameObject.Find("CurrentscoreNumber").GetComponent<TextMeshProUGUI>();
+        this.maxScoreText = GameObject.Find("HighscoreNumber").GetComponent<TextMeshPro>();
     }
 
        public int IncrementCurrentScore() {

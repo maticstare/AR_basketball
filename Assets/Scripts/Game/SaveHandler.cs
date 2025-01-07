@@ -19,8 +19,8 @@ public class SaveHandler : MonoBehaviour
         // provedes a stream for a file { read, write operations }
         // path -> string reference to the file location
         // FileMode -> Specifies how the operating system should open a file
-        FileStream _stream = new FileStream(path, FileMode.Create);
 
+        FileStream _stream = new FileStream(path, FileMode.Create);
 
         int _maxScore = Game.ScoreHandler.GetMaxScore();
         string _ballColor = Game.SkinHandler.GetBallSkin();

@@ -2,78 +2,100 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.InputSystem;
 
-public class SwipeScript : MonoBehaviour {
+public class SwipeScript : MonoBehaviour
+{
+    Vector2 startPos, endPos; // touch start position, touch end position, swipe direction
+    float touchTimeStart, touchTimeFinish, timeInterval; // to calculate swipe time to control throw force in Z direction
 
-	Vector2 startPos, endPos; // touch start position, touch end position, swipe direction
-	float touchTimeStart, touchTimeFinish, timeInterval; // to calculate swipe time to sontrol throw force in Z direction
+    Rigidbody rb;
 
-	Rigidbody rb;
-
-	static bool begin=false;
-	[SerializeField] GameObject arcamera;
-	[SerializeField] GameObject ballIndicator;
+    static bool begin = false;
+    [SerializeField] GameObject arcamera;
+    [SerializeField] GameObject ballIndicator;
 
     float swipeDistance;
 
-	void Start()
-	{
-		rb = GetComponent<Rigidbody> ();
-		begin=true;
-	}
+    // New Input System variables
+    private Touchscreen touchscreen;
+    private Vector2 swipeDirection;
 
-	// Update is called once per frame
-	void Update () {
-		// if you touch the screen
-		if(MoveBall.ThrowBegin) GetComponent<MeshRenderer>().enabled = true;
-		else GetComponent<MeshRenderer>().enabled = false;
-		if (Input.touchCount > 0 && Input.GetTouch (0).phase == TouchPhase.Began) {
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        begin = true;
 
-			// getting touch position and marking time when you touch the screen
-			touchTimeStart = Time.time;
-			startPos = Input.GetTouch (0).position;
-		}
+        // Initialize the touchscreen (for mobile) or other input device
+        touchscreen = Touchscreen.current;
+    }
 
-		if(begin){
-		// if you release your finger
-			if (Input.touchCount > 0 && Input.GetTouch (0).phase == TouchPhase.Ended) {
+    // Update is called once per frame
+    void Update()
+    {
+        // If swipe begins, show the mesh renderer
+        if (MoveBall.ThrowBegin)
+            GetComponent<MeshRenderer>().enabled = true;
+        else
+            GetComponent<MeshRenderer>().enabled = false;
 
-				// marking time when you release it
-				touchTimeFinish = Time.time;
+        if (touchscreen != null)
+        {
+            var touch = touchscreen.primaryTouch;
 
-				// calculate swipe time interval 
-				timeInterval = touchTimeFinish - touchTimeStart;
+            // 1. Start the swipe (touch begins)
+            if (touch.press.isPressed && !begin)
+            {
+                // Getting touch position and marking time when you touch the screen
+                touchTimeStart = Time.time;
+                startPos = touch.position.ReadValue();
+                begin = true; // Mark that the touch has started
+            }
 
-				// getting release finger position
-				endPos = Input.GetTouch (0).position;
+            // 2. End of swipe (touch ends)
+            if (begin && !touch.press.isPressed) // When touch is released (touch ended)
+            {
+                touchTimeFinish = Time.time; // Marking time when you release it
+                timeInterval = touchTimeFinish - touchTimeStart; // Calculate swipe time interval
+                endPos = touch.position.ReadValue(); // Get the release touch position
 
-				// calculating swipe direction in 2D space and sends info to MoveBall script
-				swipeDistance=Vector2.Distance(startPos,endPos);
-				if(swipeDistance>250f && !MoveBall.ThrowBegin){
-					MoveBall.swipeDirection = new Vector3(startPos.x - endPos.x,0,0);
-					ballRepositionAndVisibility(arcamera);
-					MoveBall.CameraRotation = CameraAngle(arcamera);
-					MoveBall.ThrowBegin = true;
-				}
-			}
+                // Calculate the swipe direction and send info to MoveBall script
+                swipeDistance = Vector2.Distance(startPos, endPos);
 
-			void ballRepositionAndVisibility(GameObject arcamera){
-				transform.position = ballIndicator.transform.position;
-				transform.rotation = arcamera.transform.rotation;
-				rb.isKinematic = false;
-				ballIndicator.GetComponent<MeshRenderer>().enabled = false;
-				GetComponent<MeshRenderer>().enabled = true;
-			}
+                // If the swipe distance is greater than a threshold, consider it a valid swipe
+                if (swipeDistance > 250f && !MoveBall.ThrowBegin)
+                {
+                    // Calculate the swipe direction (X axis movement here)
+                    MoveBall.swipeDirection = new Vector3(startPos.x - endPos.x, 0, 0);
+                    
+                    ballRepositionAndVisibility(arcamera);
+                    MoveBall.CameraRotation = CameraAngle(arcamera);
+                    MoveBall.ThrowBegin = true; // Start the ball throw logic
+                }
 
+                begin = false; // Reset the touch flag after processing the swipe
+            }
+        }
+    }
 
-			float CameraAngle(GameObject arcamera){
-				//Returns the angle where the camera is facing
-				float angle = arcamera.transform.localEulerAngles.y;
-				if(angle < 0){
-					angle = 360+angle;
-				}
-				return angle;
-			}
-		}		
-	}
+    // Reposition the ball and hide the indicator
+    void ballRepositionAndVisibility(GameObject arcamera)
+    {
+        transform.position = ballIndicator.transform.position;
+        transform.rotation = arcamera.transform.rotation;
+        rb.isKinematic = false;
+        ballIndicator.GetComponent<MeshRenderer>().enabled = false;
+        GetComponent<MeshRenderer>().enabled = true;
+    }
+
+    // Returns the angle where the camera is facing
+    float CameraAngle(GameObject arcamera)
+    {
+        float angle = arcamera.transform.localEulerAngles.y;
+        if (angle < 0)
+        {
+            angle = 360 + angle;
+        }
+        return angle;
+    }
 }
