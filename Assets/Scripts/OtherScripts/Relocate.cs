@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class Relocate : MonoBehaviour
 {
     public void LoadScene(string sceneName){
-        if(SceneManager.GetActiveScene().name != "MenuScene") {
+        if(SceneManager.GetActiveScene().name == "MainScene") {
             SaveHandler.sh_SaveGameData();
         }
         Game.skinChanged = false;

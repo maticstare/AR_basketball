@@ -9,13 +9,17 @@ public class Game : MonoBehaviour
     public static SkinHandler SkinHandler;
     public static GameData data;
     public static bool skinChanged = false;
-    [SerializeField] GameObject _ball;
-    [SerializeField] GameObject _ballIndicator;
+    /* [SerializeField] GameObject _ball;
+    [SerializeField] GameObject _ballIndicator; */
 
+    public static GameObject _ball;
+    public static GameObject _ballIndicator;
     // Start is called before the first frame update
     void Start()
     {
         initialize();
+        GameObject _ball = GameObject.Find("Ball");
+        GameObject _ballIndicator = GameObject.Find("BallIndicator");
     }
 
     public static void initialize() {
