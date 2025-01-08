@@ -16,50 +16,39 @@ public class MoveBall : MonoBehaviour
     public static float CameraRotation;
     GameObject hoop;
     public static bool HoopCollision = false;
-
+    
     bool firstUpdate = false;
     void Start()
     {
         rigid = GetComponent<Rigidbody>();
+        hoop = GameObject.Find("hoop");
     }
 
     void Update()
-    {
+    {   
         if(ThrowBegin){
             if (!firstUpdate){
                 firstUpdate = true;
                 RotateSwipeDirection();
             }
+            
             Animation += Time.deltaTime;
-            if(Animation<=1.5f && !HoopCollision){
+            
+            // ustavi animacijo in dodaj gravitacijo, ce zoga zadane kos
+            if(Animation<=1.6f && Animation>=1.4f && HoopCollision){
+                rigid.isKinematic=false;
+            }
+
+            // izvajaj animacijo dokler zoga ne zadane kosa
+            if(!HoopCollision){
                 currentPosition = GameObject.Find("Main Camera").transform.position;
-                hoop = GameObject.Find("hoop");
                 rigid.isKinematic=true;
                 CreateParabolaAnimation();
             }
-            if((Animation>1.5f && Animation<4f) || HoopCollision){
-                rigid.isKinematic=false;
-                transform.position = transform.position;
-                if(!HoopCollision)GetComponent<Rigidbody>().AddRelativeForce(new Vector3(0,0,15));
-            }
+
+            // obmocje po koncani animaciji
             if(Animation>4f){
-                /*
-                // Updating max score if current score if higher
-                if (BallCollider.score > BallCollider.maxScoreText) {
-                    BallCollider.maxScoreText = BallCollider.score;
-                    maxScoreText.text = BallCollider.maxScoreText.ToString();
-                }
-
-                // Code to be executed when you miss
-                if (BallCollider.missed) {
-                    status.text = "\n Your max score is: " + BallCollider.maxScoreText;
-
-                    BallCollider.score = 0;
-                    currentScoreText.text = "0";
-                }
-
-                // Resets the missed flag
-                BallCollider.missed = true;*/
+                rigid.isKinematic = true;
                 
                 Game.ScoreHandler.UpdateMaxScore();
 
@@ -87,7 +76,6 @@ public class MoveBall : MonoBehaviour
         float xCoordinate = (float)(hoopBallDistance*Math.Sin(radianRotation))+currentPosition.x;
         float zCoordinate = (float)(hoopBallDistance*Math.Cos(radianRotation))+currentPosition.z;
         Vector3 facingOffset = new Vector3(xCoordinate,0,zCoordinate) - swipeDirection/(2650 / hoopBallDistance);
-        rigid.isKinematic = false;
         transform.position = MathParabola.Parabola(currentPosition,facingOffset+new Vector3(0,0.3f,-0.1f),0.7f,Animation/1.5f);
         //transform.Rotate(-3,0,0,Space.Self);
     }

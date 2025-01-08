@@ -24,7 +24,6 @@ public class SwipeScript : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        begin = true;
 
         // Initialize the touchscreen (for mobile) or other input device
         touchscreen = Touchscreen.current;
@@ -32,7 +31,7 @@ public class SwipeScript : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {   
         // If swipe begins, show the mesh renderer
         if (MoveBall.ThrowBegin)
             GetComponent<MeshRenderer>().enabled = true;
