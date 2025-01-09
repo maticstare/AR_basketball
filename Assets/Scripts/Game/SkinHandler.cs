@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class SkinHandler {
 
@@ -10,38 +11,41 @@ public class SkinHandler {
     private string[] unlockedSkins;
     private Dictionary<int, string> skinUnlockRequirement = new Dictionary<int, string>();
 
+
     // ca_ballSkin -> the skin that will be first loaded
     // ca_unlockedSkins -> string array that holds the unlocked skins
     public SkinHandler(string ca_ballSkin, string[] ca_unlockedSkins) {
         this.ballSkin = ca_ballSkin;
         this.unlockedSkins = ca_unlockedSkins;
-        
         // Sets the check mark to the currently selected skin
         GameObject checkmark = GameObject.Find("CheckMarkImage");
         if(checkmark != null) {
             checkmark.transform.position = GameObject.Find(ca_ballSkin+"BasketballImage").transform.position;
         }
 
-        // A loop that removes all of the lock images form ball skins and replaces the unlock requirements with the individual skin names
-        for (int i = 1; i < this.unlockedSkins.Length; i++) {
-            string _skinLockImageName = this.unlockedSkins[i]+"LockImage";
-            string _skinUnlockTextName = this.unlockedSkins[i]+"UnlockText";
+        if(SceneManager.GetActiveScene().name == "SkinsScene"){
+            // A loop that removes all of the lock images form ball skins and replaces the unlock requirements with the individual skin names
+            for (int i = 1; i < this.unlockedSkins.Length; i++) {
+                string _skinLockImageName = this.unlockedSkins[i]+"LockImage";
+                string _skinUnlockTextName = this.unlockedSkins[i]+"UnlockText";
 
-            GameObject lockImage = GameObject.Find(_skinLockImageName);
-            GameObject unlockText = GameObject.Find(_skinUnlockTextName);
+                GameObject lockImage = GameObject.Find(_skinLockImageName);
+                GameObject unlockText = GameObject.Find(_skinUnlockTextName);
 
-            if(lockImage != null) {
-                lockImage.SetActive(false);
-            }
+                if(lockImage != null) {
+                    lockImage.SetActive(false);
+                }
 
-            if(unlockText != null) {
-                unlockText.GetComponent<TMP_Text>().text = this.unlockedSkins[i];
+                if(unlockText != null) {
+                    unlockText.GetComponent<TMP_Text>().text = this.unlockedSkins[i];
+                }
             }
         }
+        
 
         // Building the dictionary with the scores required for unlock (key; left) and skin names (value ; right)
-        skinUnlockRequirement.Add(5, "Pink");
-        skinUnlockRequirement.Add(10, "Green");
+        skinUnlockRequirement.Add(1, "Pink");
+        skinUnlockRequirement.Add(5, "Green");
         skinUnlockRequirement.Add(20, "Blue");
         skinUnlockRequirement.Add(40, "Red");
     }
