@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainScene.unity
     guid: 0c32ab25a6b2b1340842d7421ba489f1
+  - enabled: 1
+    path: Assets/Scenes/SkinsScene.unity
+    guid: 313719fabe12a8a4a9ffd92f3e41f1d9
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 6ee72d15cf39dd748a13eac57397b9af,
       type: 2}

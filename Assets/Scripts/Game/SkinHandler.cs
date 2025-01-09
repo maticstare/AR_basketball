@@ -40,9 +40,9 @@ public class SkinHandler {
         }
 
         // Building the dictionary with the scores required for unlock (key; left) and skin names (value ; right)
-        skinUnlockRequirement.Add(10, "Pink");
-        skinUnlockRequirement.Add(20, "Green");
-        skinUnlockRequirement.Add(30, "Blue");
+        skinUnlockRequirement.Add(5, "Pink");
+        skinUnlockRequirement.Add(10, "Green");
+        skinUnlockRequirement.Add(20, "Blue");
         skinUnlockRequirement.Add(40, "Red");
     }
 
