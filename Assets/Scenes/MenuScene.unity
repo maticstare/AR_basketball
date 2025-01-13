@@ -3206,7 +3206,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: MainScene
+          m_StringArgument: Hand Landmark Detection
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1915583717

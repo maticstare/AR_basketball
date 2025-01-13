@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
+using Mediapipe.Unity.Sample.HandLandmarkDetection;
+using UnityEngine.TextCore.Text;
+//using System.Numerics;
 
 public class SwipeScript : MonoBehaviour
 {
@@ -14,12 +17,23 @@ public class SwipeScript : MonoBehaviour
     static bool begin = false;
     [SerializeField] GameObject arcamera;
     [SerializeField] GameObject ballIndicator;
+    [SerializeField] private HandLandmarkerRunner handLandmarkerRunner;
+    [SerializeField] TMP_Text text;
 
     float swipeDistance;
 
     // New Input System variables
     private Touchscreen touchscreen;
-    private Vector2 swipeDirection;
+    private UnityEngine.Vector3 swipeDirection;
+
+    private UnityEngine.Vector2 prevPos;
+    float stationaryStartTime = 0;
+    float stationaryThreshold = 1f;
+    float stationaryThresholdEnd = 0.5f;
+    bool startPositionSet = false;
+    bool endPositionSet = true;
+    bool isStationary = false;
+    float throwTimeoutEndTime = 0.0f;
 
     void Start()
     {
@@ -32,13 +46,79 @@ public class SwipeScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {   
+        Vector2 indexTip = handLandmarkerRunner.indexTipPosition;
+
+        if (Time.time < throwTimeoutEndTime)
+        {
+            return;
+        }
+
+        // Check if the indexTip position is valid
+        if (indexTip != default)
+        {
+            if(startPositionSet == true){
+                text.text ="Go!";
+            }
+            else{
+                text.text = "";
+            }
+            
+            // Check if the indexTip is stationary (within the threshold)
+            if (Vector2.Distance(indexTip, prevPos) < 0.05f)
+            {
+                // If the stationary timer is not already started, start it
+                if (!isStationary)
+                {
+                    stationaryStartTime = Time.time;
+                    isStationary = true;
+                }
+
+                // If it's been stationary for at least the threshold time, set startPos or endPos
+                if (Time.time - stationaryStartTime > stationaryThreshold && !startPositionSet){
+                    startPos = indexTip;
+                    startPositionSet = true;
+                    endPositionSet = false;
+                }
+                else if (!endPositionSet && Time.time - stationaryStartTime > stationaryThresholdEnd && Vector2.Distance(indexTip,startPos) > 0.2f){
+                    endPos = indexTip;
+                    endPositionSet = true;
+                }
+            }
+            else
+            {
+                // Reset stationary tracking if the indexTip moves
+                isStationary = false;
+                stationaryStartTime = 0;
+            }
+
+            // Update prevPos for the next frame
+            prevPos = indexTip;
+
+            // Reset positions if both start and end positions are set
+            if (startPositionSet && endPositionSet)
+            {
+                swipeDistance = Vector2.Distance(startPos, endPos);
+                if (swipeDistance > 0.2f && !MoveBall.ThrowBegin){
+                    // Calculate the swipe direction (X axis movement here)
+                    MoveBall.swipeDirection = new Vector3(- ((startPos.y - endPos.y) * Screen.width), 0, 0);
+                    startPositionSet = false;
+                    ballRepositionAndVisibility(arcamera);
+                    MoveBall.CameraRotation = CameraAngle(arcamera);
+                    MoveBall.ThrowBegin = true; // Start the ball throw logic
+                    throwTimeoutEndTime = Time.time + 5f;
+                }
+            }
+        }
+
+
+
         // If swipe begins, show the mesh renderer
         if (MoveBall.ThrowBegin)
             GetComponent<MeshRenderer>().enabled = true;
         else
             GetComponent<MeshRenderer>().enabled = false;
 
-        if (touchscreen != null)
+        if (touchscreen != null && indexTip == default)
         {
             var touch = touchscreen.primaryTouch;
 
@@ -66,6 +146,7 @@ public class SwipeScript : MonoBehaviour
                 {
                     // Calculate the swipe direction (X axis movement here)
                     MoveBall.swipeDirection = new Vector3(startPos.x - endPos.x, 0, 0);
+                    Debug.Log(MoveBall.swipeDirection);
                     
                     ballRepositionAndVisibility(arcamera);
                     MoveBall.CameraRotation = CameraAngle(arcamera);
