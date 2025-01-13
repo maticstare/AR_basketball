@@ -5,7 +5,7 @@ using TMPro;
 
 public class SecretBall : MonoBehaviour
 {
-    [SerializeField] GameObject PurpleParticleSystem;
+    //[SerializeField] GameObject PurpleParticleSystem;
     [SerializeField] TextMeshProUGUI scoreText;
 
     void Start() {
@@ -19,7 +19,7 @@ public class SecretBall : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         if(other.name=="Ball"){
-            scoreText.text = "";
+            scoreText.text = "Purple Ball Unlocked!";
             BallCollider.SetWasCollided(true);
             // Removes the secret ball object form scene
             this.gameObject.SetActive(false);
