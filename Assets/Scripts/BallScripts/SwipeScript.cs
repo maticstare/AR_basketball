@@ -29,7 +29,7 @@ public class SwipeScript : MonoBehaviour
     private UnityEngine.Vector2 prevPos;
     float stationaryStartTime = 0;
     float stationaryThreshold = 1f;
-    float stationaryThresholdEnd = 0.5f;
+    float stationaryThresholdEnd = 0.15f;
     bool startPositionSet = false;
     bool endPositionSet = true;
     bool isStationary = false;
@@ -50,6 +50,7 @@ public class SwipeScript : MonoBehaviour
 
         if (Time.time < throwTimeoutEndTime)
         {
+            text.text = "";
             return;
         }
 
@@ -79,7 +80,7 @@ public class SwipeScript : MonoBehaviour
                     startPositionSet = true;
                     endPositionSet = false;
                 }
-                else if (!endPositionSet && Time.time - stationaryStartTime > stationaryThresholdEnd && Vector2.Distance(indexTip,startPos) > 0.2f){
+                else if (!endPositionSet && Time.time - stationaryStartTime > stationaryThresholdEnd && Vector2.Distance(indexTip,startPos) > 0.15f){
                     endPos = indexTip;
                     endPositionSet = true;
                 }
@@ -105,7 +106,7 @@ public class SwipeScript : MonoBehaviour
                     ballRepositionAndVisibility(arcamera);
                     MoveBall.CameraRotation = CameraAngle(arcamera);
                     MoveBall.ThrowBegin = true; // Start the ball throw logic
-                    throwTimeoutEndTime = Time.time + 5f;
+                    throwTimeoutEndTime = Time.time + 4.5f;
                 }
             }
         }
