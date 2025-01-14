@@ -24,9 +24,9 @@ public class SwipeScript : MonoBehaviour
 
     // New Input System variables
     private Touchscreen touchscreen;
-    private UnityEngine.Vector3 swipeDirection;
+    private Vector3 swipeDirection;
 
-    private UnityEngine.Vector2 prevPos;
+    private Vector2 prevPos;
     float stationaryStartTime = 0;
     float stationaryThreshold = 1f;
     float stationaryThresholdEnd = 0.15f;
@@ -119,7 +119,7 @@ public class SwipeScript : MonoBehaviour
         else
             GetComponent<MeshRenderer>().enabled = false;
 
-        if (touchscreen != null && indexTip == default)
+        if (touchscreen != null)
         {
             var touch = touchscreen.primaryTouch;
 
